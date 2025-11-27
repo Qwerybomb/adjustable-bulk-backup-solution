@@ -11,10 +11,15 @@ public class Main {
     static LocalDate Date = LocalDate.now();
 
     // helpers
-    DirHandle directoryManager = new DirHandle();
-    settingsReader settingsReader = new settingsReader();
+    static DirHandle directoryManager = new DirHandle();
+    static settingsReader SettingsReader = new settingsReader();
 
     public static void main(String[] args) throws IOException {
+
+     SettingsReader.RefreshSettings();
+
+     System.out.println(SettingsReader.getSourceDirectories());
+     System.out.println(SettingsReader.getFinalDirectory());
 
     }
 }
