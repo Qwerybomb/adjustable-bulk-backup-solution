@@ -9,12 +9,12 @@ import java.util.List;
 public class settingsReader {
 
     // main class variables
-    File settings;
-    ArrayList<String> SourceDirs = new ArrayList<>();
-    String settingsLocation = null;
-    String FinalDir = null;
-    int HoursSetting = 24;
-    String CurrentDir;
+    private File settings;
+    private ArrayList<String> SourceDirs = new ArrayList<>();
+    private String settingsLocation = null;
+    private String FinalDir = null;
+    private int HoursSetting = 24;
+    private int readHours = 0;
 
     // detector strings
     String TargetDir = "░▒▓ Target Directories:";
@@ -29,10 +29,10 @@ public class settingsReader {
 
         String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         String decodedPath = URLDecoder.decode(path, "UTF-8");
-        CurrentDir = decodedPath.substring(0, decodedPath.lastIndexOf("/"));
+        String currentDir = decodedPath.substring(0, decodedPath.lastIndexOf("/"));
 
         // if settings file doesn't exist. create the fill it with the basics.
-        settings = new File(CurrentDir, "/Settings.txt");
+        settings = new File(currentDir, "/Settings.txt");
         if (!settings.exists()) {
            settings.createNewFile();
             writeFile(settings,TargetDir + "\n\n" + BackupDir + "\n\n" + HoursUpdate + "\n" + "0/" + HoursSetting);
@@ -66,6 +66,7 @@ public class settingsReader {
             line = br.readLine();
             line = br.readLine();
             HoursSetting = Integer.parseInt((line.substring(line.lastIndexOf("/") + 1, line.length())));
+            readHours = Integer.parseInt((line.substring(0,line.lastIndexOf("/"))));
 
         } finally {
             br.close();
@@ -103,5 +104,13 @@ public class settingsReader {
         bufferedWriter.write(content);
         bufferedWriter.flush();
         bufferedWriter.close();
+    }
+
+    public int getHoursSetting() {
+      return HoursSetting;
+    }
+
+    public int getCurrentHours() {
+        return readHours;
     }
 }

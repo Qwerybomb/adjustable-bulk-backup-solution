@@ -27,7 +27,7 @@ public class Main {
      System.out.println("Successfully initialized");
 
      SettingsReader.RefreshSettings();
-     SettingsReader.updateCurHours(0);
+     elapsedHours = SettingsReader.getCurrentHours();
 
      // main run loop
      while (true) {
@@ -53,7 +53,7 @@ public class Main {
             PreviousHour = Hour;
 
             // check if current passed hours = the setting for the backup timer
-            if (elapsedHours == SettingsReader.HoursSetting) {
+            if (elapsedHours == SettingsReader.getHoursSetting()) {
 
                 // reset timer
                 elapsedHours = 0;
