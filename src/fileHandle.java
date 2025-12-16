@@ -4,7 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DirHandle {
+public class fileHandle {
 
     // create a directory at String Location
     public static void CreateDirectory(String Location) {
@@ -17,7 +17,7 @@ public class DirHandle {
     }
 
     // copy a directory from (String sourceDirectoryLocation) and place it at (String destinationDirectoryLocation)
-    public static void copyDirectory(String sourceDirectoryLocation, String destinationDirectoryLocation) throws IOException {
+    public static void copyFiles(String sourceDirectoryLocation, String destinationDirectoryLocation) throws IOException {
         Files.walk(Paths.get(sourceDirectoryLocation)).forEach(source -> {
             Path destination = Paths.get(destinationDirectoryLocation, source.toString().substring(sourceDirectoryLocation.length() - 1));
             try {

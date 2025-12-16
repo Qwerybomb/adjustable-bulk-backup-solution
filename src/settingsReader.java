@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class settingsReader {
+public class  settingsReader {
 
     // main class variables
-    private File settings;
-    private ArrayList<String> SourceDirs = new ArrayList<>();
+    private textFile settings;
+    private ArrayList<String> sourceDirs = new ArrayList<>();
     private String settingsLocation = null;
     private String FinalDir = null;
     private int HoursSetting = 24;
@@ -20,11 +20,15 @@ public class settingsReader {
     private LocalDate decidedDate = LocalDate.now();
     private LocalTime decidedTime = LocalTime.now();
 
+    // line numbers of the various settings
+    int HoursElapsedLine = 0;
+    int LastRecordedTimeLine = 0;
+
     // detector strings
-    String TargetDir = "░▒▓ Target Directories:";
-    String BackupDir = "░▒▓ Backup directory";
-    String HoursUpdate = "░▒▓ Hours elapsed until update";
-    String LastRecordedTime = "░▒▓ Previously recorded Date && time";
+    final String TargetDir = "░▒▓ Target Directories:";
+    final String BackupDir = "░▒▓ Backup directory";
+    final String HoursUpdate = "░▒▓ Hours elapsed until update";
+    final String LastRecordedTime = "░▒▓ Previously recorded Date && time";
 
     public void RefreshSettings() throws IOException {
 
@@ -32,63 +36,57 @@ public class settingsReader {
         String decodedPath = URLDecoder.decode(path, "UTF-8");
         String currentDir = decodedPath.substring(0, decodedPath.lastIndexOf("/"));
 
-        // if settings file doesn't exist. create one and fill it with the basics.
-        settings = new File(currentDir, "/Settings.txt");
-        if (!settings.exists()) {
-           settings.createNewFile();
-            writeFile(settings,
-                    TargetDir +
+        // make sure settings is non-null
+        if (settings == null) {
+            settings = new textFile(new File(currentDir, "/Settings.txt"));
+        }
+
+        // create new settings file if one isn't present
+        if (!settings.getFile().exists()) {
+            settings.getFile().createNewFile();
+            settings.writeFile(TargetDir +
                             "\n\n" + BackupDir +
                             "\n\n" + HoursUpdate +
                             "\n" + "0/" + HoursSetting +
                             "\n" + LastRecordedTime +
                             "\n" + decidedDate + " 〗〖 " + decidedTime);
-            settingsLocation = settings.getPath();
-        } else {
-            settingsLocation = settings.getPath();
         }
 
         // prep for the actual file reading
         int breakout = 0;
-        BufferedReader br = new BufferedReader(new FileReader(settingsLocation));
-        SourceDirs.clear();
+        int curLineNum = 1;
+        String curLine = "";
+        sourceDirs.clear();
+        settings.refreshLines();
 
-        try {
-
-            // skip forward a few lines to begin reading the directories
-            String line = br.readLine();
-            line = br.readLine();
-
-            while (!line.equals(BackupDir) || breakout > 100) {
-
-                SourceDirs.add(line);
-                line = br.readLine();
-                breakout++;
+            for(int i = curLineNum; !settings.getLine(i).equals(BackupDir); i++) {
+                sourceDirs.add(settings.getLine(i));
+                curLineNum++;
             }
 
             // get backup directory
-            FinalDir = br.readLine();
+            curLineNum += 1;
+            FinalDir = settings.getLine(curLineNum);
 
             // get hours needed
-            line = br.readLine();
-            line = br.readLine();
-            HoursSetting = Integer.parseInt((line.substring(line.lastIndexOf("/") + 1, line.length())));
-            readHours = Integer.parseInt((line.substring(0,line.lastIndexOf("/"))));
+            curLineNum += 2;
+            curLine = settings.getLine(curLineNum);
+
+            HoursSetting = Integer.parseInt((curLine.substring(curLine.lastIndexOf("/") + 1, curLine.length())));
+            readHours = Integer.parseInt((curLine.substring(0, curLine.lastIndexOf("/"))));
+            HoursElapsedLine = curLineNum;
 
             // get the previous date
-            line = br.readLine();
-            line = br.readLine();
-            decidedDate = LocalDate.parse(line.substring(0,line.lastIndexOf(" 〗")));
-            decidedTime = LocalTime.parse(line.substring(line.lastIndexOf("〖") + 2, line.length() - 1));
+            curLineNum += 2;
+            curLine = settings.getLine(curLineNum);
 
-        } finally {
-            br.close();
-        }
-
+            decidedDate = LocalDate.parse(curLine.substring(0,curLine.lastIndexOf(" 〗")));
+            decidedTime = LocalTime.parse(curLine.substring(curLine.lastIndexOf("〖") + 2, curLine.length() - 1));
+            LastRecordedTimeLine = curLineNum;
     }
 
     public void setSettingsLocation(String directory) {
-        settingsLocation = directory;
+        settings.setSettings(new File(directory));
     }
 
     public String getFinalDirectory() {
@@ -96,33 +94,15 @@ public class settingsReader {
     }
 
     public ArrayList<String> getSourceDirectories() {
-        return SourceDirs;
+        return sourceDirs;
     }
 
     public void updateCurHours(int update) throws IOException {
-        lineUpdate(settings, 6, update + "/" + HoursSetting);
+        settings.lineUpdate(HoursElapsedLine, update + "/" + HoursSetting);
     }
 
     public void updateCurDateTime(LocalDate newDate, LocalTime newTime) throws IOException {
-        lineUpdate(settings,8, newDate.toString() + " 〗〖 " + newTime.toString());
-    }
-
-    private void lineUpdate(File toUpdate, int LineNum, String NewContent) throws IOException {
-        List<String> lines = Files.readAllLines(Path.of(toUpdate.getPath()));
-        lines.set(LineNum - 1, NewContent);
-        StringBuilder builder = new StringBuilder();
-        for (String s : lines) {
-            builder.append(s).append("\n");
-        }
-        writeFile(toUpdate, builder.toString());
-    }
-
-    public void writeFile(File file, String content) throws IOException {
-        FileWriter fileWriter = new FileWriter(file);
-        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-        bufferedWriter.write(content);
-        bufferedWriter.flush();
-        bufferedWriter.close();
+        settings.lineUpdate(LastRecordedTimeLine, newDate.toString() + " 〗〖 " + newTime.toString());
     }
 
     public int getHoursSetting() {
@@ -140,4 +120,59 @@ public class settingsReader {
     public int getCurrentHours() {
         return readHours;
     }
+}
+
+class textFile {
+  private File txtFile;
+  private List<String> lines;
+  private int length;
+
+  textFile(File txtFile) {
+      this.txtFile = txtFile;
+      if (txtFile.exists()) {
+          refreshLines();
+      }
+  }
+
+  public void lineUpdate(int LineNum, String NewContent) throws IOException {
+        lines.set(LineNum, NewContent);
+        StringBuilder builder = new StringBuilder();
+        for (String s : lines) {
+            builder.append(s).append("\n");
+       }
+        writeFile(builder.toString());
+ }
+
+  public String getLine(int lineNumber) throws IOException {
+        return lines.get(lineNumber);
+ }
+
+  public void writeFile(String content) throws IOException {
+        FileWriter fileWriter = new FileWriter(txtFile);
+        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+        bufferedWriter.write(content);
+        bufferedWriter.flush();
+        bufferedWriter.close();
+ }
+
+  public void setSettings(File settingsFile) {
+      this.txtFile = settingsFile;
+  }
+
+  public File getFile() {
+      return txtFile;
+  }
+
+  public void refreshLines() {
+      try {
+          lines = Files.readAllLines(Path.of(txtFile.getPath()));
+          length = lines.size();
+      } catch (IOException e) {
+          throw new RuntimeException(e);
+      }
+  }
+
+  public int getFileLength() {
+      return length;
+  }
 }

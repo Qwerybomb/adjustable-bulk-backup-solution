@@ -1,14 +1,9 @@
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
-import java.util.Set;
 
 public class Main {
 
@@ -21,11 +16,13 @@ public class Main {
 
     // helpers
     static settingsReader SettingsReader = new settingsReader();
+    static audioHandle audio = new audioHandle();
 
     public static void main(String[] args) throws IOException {
 
      System.out.println("Successfully initialized");
 
+     // update hours on startup to properly reflect time passed with pc off.
       Date = LocalDate.now();
      SettingsReader.RefreshSettings();
      elapsedHours = SettingsReader.getCurrentHours();
@@ -72,14 +69,14 @@ public class Main {
                 // refresh settings and make the final directory with name and path
                 SettingsReader.RefreshSettings();
                 String dirPath = SettingsReader.getFinalDirectory() + "Automatic Backup on "+ Date.toString() + " Hour " + Hour;
-                DirHandle.CreateDirectory(dirPath);
+                fileHandle.CreateDirectory(dirPath);
 
                 for (String s : SettingsReader.getSourceDirectories()) {
 
                     // create directory inside main backup directory for each source
                     File file = new File(s);
-                    DirHandle.CreateDirectory(dirPath + "/" + file.getName());
-                    DirHandle.copyDirectory(s, dirPath + "/" + file.getName());
+                    fileHandle.CreateDirectory(dirPath + "/" + file.getName());
+                    fileHandle.copyFiles(s, dirPath + "/" + file.getName());
 
                 }
                 System.out.println("backupProcess Successful");
