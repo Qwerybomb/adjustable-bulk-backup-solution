@@ -86,7 +86,7 @@ public class  settingsReader {
     }
 
     public void setSettingsLocation(String directory) {
-        settings.setSettings(new File(directory));
+        settings.setFile(new File(directory));
     }
 
     public String getFinalDirectory() {
@@ -155,8 +155,8 @@ class textFile {
         bufferedWriter.close();
  }
 
-  public void setSettings(File settingsFile) {
-      this.txtFile = settingsFile;
+  public void setFile(File txtFile) {
+      this.txtFile = txtFile;
   }
 
   public File getFile() {
@@ -174,5 +174,9 @@ class textFile {
 
   public int getFileLength() {
       return length;
+  }
+
+  public int findLineOf(String identifier) {
+      return lines.indexOf(identifier);
   }
 }

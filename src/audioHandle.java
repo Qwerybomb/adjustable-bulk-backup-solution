@@ -5,9 +5,11 @@ import java.io.File;
 
 public class audioHandle {
 
-    public static void playSound(File Audio) {
+    private static File audio;
+
+    public static void playSound() {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(Audio.getAbsoluteFile());
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(audio.getAbsoluteFile());
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
@@ -15,5 +17,9 @@ public class audioHandle {
         } catch (Exception ex) {
             System.out.println("Failed to run audio");
         }
+    }
+
+    public static void setAudio(File audio) {
+        audioHandle.audio = audio;
     }
 }
