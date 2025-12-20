@@ -1,5 +1,8 @@
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoField;
@@ -14,16 +17,13 @@ public class Main {
     static int PreviousHour = Hour;
     static int elapsedHours = 0;
 
-    // helpers
+    // class requirements
     static settingsReader SettingsReader = new settingsReader();
-    static audioHandle audio = new audioHandle();
 
     public static void main(String[] args) throws IOException {
 
-     System.out.println("Successfully initialized");
-
      // update hours on startup to properly reflect time passed with pc off.
-      Date = LocalDate.now();
+     Date = LocalDate.now();
      SettingsReader.RefreshSettings();
      elapsedHours = SettingsReader.getCurrentHours();
      if (!SettingsReader.getPreviousDate().isEqual(Date)) {
