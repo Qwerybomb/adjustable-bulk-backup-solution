@@ -2,14 +2,15 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.io.File;
+import java.util.HashMap;
 
 public class audioHandle {
 
-    private static File audio;
+    private static final HashMap<situation, File> audios = new HashMap<>();
 
-    public static void playSound() {
+    public static void playSound(situation context) {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(audio.getAbsoluteFile());
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(audios.get(context).getAbsoluteFile());
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
@@ -19,7 +20,16 @@ public class audioHandle {
         }
     }
 
-    public static void setAudio(File audio) {
-        audioHandle.audio = audio;
+    public static void setAudio(File audio, situation context) {
+        if (audios.containsKey(context)) {
+            audios.replace(context, audio);
+        } else {
+            audios.put(context, audio);
+        }
+    }
+
+    public enum situation {
+        Error(),
+        Success();
     }
 }

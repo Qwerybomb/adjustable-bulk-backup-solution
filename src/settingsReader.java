@@ -11,24 +11,19 @@ import java.util.List;
 public class  settingsReader {
 
     // main class variables
-    private textFile settings;
-    private ArrayList<String> sourceDirs = new ArrayList<>();
-    private String settingsLocation = null;
+    private textFile settings = null;
+    private final ArrayList<String> sourceDirs = new ArrayList<>();
     private String FinalDir = null;
     private int HoursSetting = 24;
     private int readHours = 0;
     private LocalDate decidedDate = LocalDate.now();
     private LocalTime decidedTime = LocalTime.now();
 
-    // line numbers of the various settings
-    int HoursElapsedLine = 0;
-    int LastRecordedTimeLine = 0;
-
     // detector strings
-    final String TargetDir = "░▒▓ Target Directories:";
-    final String BackupDir = "░▒▓ Backup directory";
-    final String HoursUpdate = "░▒▓ Hours elapsed until update";
-    final String LastRecordedTime = "░▒▓ Previously recorded Date && time";
+    final String lineTargetDir = "░▒▓ Target Directories:";
+    final String lineBackupDir = "░▒▓ Backup directory";
+    final String lineRecordedHoursTime = "░▒▓ Hours elapsed until update";
+    final String lineRecordedDateTime = "░▒▓ Previously recorded Date && time";
 
     public void RefreshSettings() throws IOException {
 
@@ -44,45 +39,35 @@ public class  settingsReader {
         // create new settings file if one isn't present
         if (!settings.getFile().exists()) {
             settings.getFile().createNewFile();
-            settings.writeFile(TargetDir +
-                            "\n\n" + BackupDir +
-                            "\n\n" + HoursUpdate +
+            settings.writeFile(lineTargetDir +
+                            "\n\n" + lineBackupDir +
+                            "\n\n" + lineRecordedHoursTime +
                             "\n" + "0/" + HoursSetting +
-                            "\n" + LastRecordedTime +
+                            "\n" + lineRecordedDateTime +
                             "\n" + decidedDate + " 〗〖 " + decidedTime);
         }
 
-        // prep for the actual file reading
-        int breakout = 0;
-        int curLineNum = 1;
+        // prep for file reading
         String curLine = "";
         sourceDirs.clear();
         settings.refreshLines();
 
-            for(int i = curLineNum; !settings.getLine(i).equals(BackupDir); i++) {
+            for(int i = settings.findLineOf(lineTargetDir) + 1; !settings.getLine(i).equals(lineBackupDir); i++) {
                 sourceDirs.add(settings.getLine(i));
-                curLineNum++;
             }
 
             // get backup directory
-            curLineNum += 1;
-            FinalDir = settings.getLine(curLineNum);
+            FinalDir = settings.getLine(settings.findLineOf(lineBackupDir) + 1);
 
             // get hours needed
-            curLineNum += 2;
-            curLine = settings.getLine(curLineNum);
-
+            curLine = settings.getLine(settings.findLineOf(lineRecordedHoursTime) + 1);
             HoursSetting = Integer.parseInt((curLine.substring(curLine.lastIndexOf("/") + 1, curLine.length())));
             readHours = Integer.parseInt((curLine.substring(0, curLine.lastIndexOf("/"))));
-            HoursElapsedLine = curLineNum;
 
             // get the previous date
-            curLineNum += 2;
-            curLine = settings.getLine(curLineNum);
-
+            curLine = settings.getLine(settings.findLineOf(lineRecordedDateTime) + 1);
             decidedDate = LocalDate.parse(curLine.substring(0,curLine.lastIndexOf(" 〗")));
             decidedTime = LocalTime.parse(curLine.substring(curLine.lastIndexOf("〖") + 2, curLine.length() - 1));
-            LastRecordedTimeLine = curLineNum;
     }
 
     public void setSettingsLocation(String directory) {
@@ -98,11 +83,11 @@ public class  settingsReader {
     }
 
     public void updateCurHours(int update) throws IOException {
-        settings.lineUpdate(HoursElapsedLine, update + "/" + HoursSetting);
+        settings.lineUpdate(settings.findLineOf(lineRecordedHoursTime) + 1, update + "/" + HoursSetting);
     }
 
     public void updateCurDateTime(LocalDate newDate, LocalTime newTime) throws IOException {
-        settings.lineUpdate(LastRecordedTimeLine, newDate.toString() + " 〗〖 " + newTime.toString());
+        settings.lineUpdate(settings.findLineOf(lineRecordedDateTime) + 1, newDate.toString() + " 〗〖 " + newTime.toString());
     }
 
     public int getHoursSetting() {

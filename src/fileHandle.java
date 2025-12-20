@@ -12,6 +12,7 @@ public class fileHandle {
         if (directory.mkdir()) {
             System.out.println("Directory Succesfully Created at " + Location);
         } else {
+            audioHandle.playSound(audioHandle.situation.Error);
             System.out.println("Failed to create Directory at at " + Location);
         }
     }
@@ -24,6 +25,7 @@ public class fileHandle {
                 Files.copy(source, destination);
                 System.out.println("copied Files from" + sourceDirectoryLocation);
             } catch (IOException e) {
+                audioHandle.playSound(audioHandle.situation.Error);
                 e.printStackTrace();
             }
         });
