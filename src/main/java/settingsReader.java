@@ -37,8 +37,8 @@ public class  settingsReader {
         }
 
         // create new settings file if one isn't present
-        if (!settings.getFile().exists()) {
-            settings.getFile().createNewFile();
+        if (!settings.getExternalFile().exists()) {
+            settings.createExternalFile();
             settings.writeFile(lineTargetDir +
                             "\n\n" + lineBackupDir +
                             "\n\n" + lineRecordedHoursTime +
