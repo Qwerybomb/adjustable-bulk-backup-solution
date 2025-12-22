@@ -1,5 +1,4 @@
-import utils.Audio;
-import utils.textFile;
+import utils.ExternalTextFile;
 
 import java.io.*;
 import java.net.URLDecoder;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 public class  settingsReader {
 
     // main class variables
-    private textFile settings = null;
+    private ExternalTextFile settings = null;
     private final ArrayList<String> sourceDirs = new ArrayList<>();
     private String FinalDir = null;
     private int HoursSetting = 24;
@@ -33,7 +32,7 @@ public class  settingsReader {
 
         // make sure settings is non-null
         if (settings == null) {
-            settings = new textFile(new File(currentDir, "/Settings.txt"));
+            settings = new ExternalTextFile(new File(currentDir, "/Settings.txt"));
         }
 
         // create new settings file if one isn't present

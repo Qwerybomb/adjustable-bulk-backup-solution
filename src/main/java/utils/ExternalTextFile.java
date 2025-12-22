@@ -6,13 +6,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
-public class textTest extends BasicTextFileReader {
+public class ExternalTextFile extends TextFileTemplate {
 
     private File txtFile;
 
-    textTest(File txtFile) {
+    public ExternalTextFile(File txtFile) {
         this.txtFile = txtFile;
         if (txtFile.exists()) {
             refreshLines();
@@ -20,7 +19,7 @@ public class textTest extends BasicTextFileReader {
     }
 
     @Override
-    void refreshLines() {
+    public void refreshLines() {
         try {
             lines = Files.readAllLines(Path.of(txtFile.getPath()));
             length = lines.size();
@@ -30,7 +29,7 @@ public class textTest extends BasicTextFileReader {
     }
 
     @Override
-    void lineUpdate(int LineNum, String NewContent) throws IOException {
+    public void lineUpdate(int LineNum, String NewContent) throws IOException {
         lines.set(LineNum, NewContent);
         StringBuilder builder = new StringBuilder();
         for (String s : lines) {
@@ -40,21 +39,11 @@ public class textTest extends BasicTextFileReader {
     }
 
     @Override
-    String getLine(int lineNumber) throws IOException {
-        return lines.get(lineNumber);
-    }
-
-    @Override
-    void writeFile(String content) throws IOException {
+    public void writeFile(String content) throws IOException {
         FileWriter fileWriter = new FileWriter(txtFile);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         bufferedWriter.write(content);
         bufferedWriter.flush();
         bufferedWriter.close();
-    }
-
-    @Override
-    int findLineOf(String identifier) {
-        return lines.indexOf(identifier);
     }
 }
