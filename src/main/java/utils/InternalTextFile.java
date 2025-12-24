@@ -10,8 +10,9 @@ public class InternalTextFile extends TextFileTemplate {
 
     InputStream fileStream;
 
-    InternalTextFile(InputStream internalFile) {
+    public InternalTextFile(InputStream internalFile) throws IOException {
         this.fileStream = internalFile;
+        refreshLines();
     }
 
     @Override

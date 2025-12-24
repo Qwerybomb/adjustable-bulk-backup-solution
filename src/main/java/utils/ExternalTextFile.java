@@ -9,10 +9,10 @@ import java.nio.file.Path;
 
 public class ExternalTextFile extends TextFileTemplate {
 
-    private File txtFile;
+    private File textFile;
 
     public ExternalTextFile(File txtFile) {
-        this.txtFile = txtFile;
+        this.textFile = txtFile;
         if (txtFile.exists()) {
             refreshLines();
         }
@@ -21,7 +21,7 @@ public class ExternalTextFile extends TextFileTemplate {
     @Override
     public void refreshLines() {
         try {
-            lines = Files.readAllLines(Path.of(txtFile.getPath()));
+            lines = Files.readAllLines(Path.of(textFile.getPath()));
             length = lines.size();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -40,10 +40,14 @@ public class ExternalTextFile extends TextFileTemplate {
 
     @Override
     public void writeFile(String content) throws IOException {
-        FileWriter fileWriter = new FileWriter(txtFile);
+        FileWriter fileWriter = new FileWriter(textFile);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         bufferedWriter.write(content);
         bufferedWriter.flush();
         bufferedWriter.close();
+    }
+
+    public File getFile() {
+        return textFile;
     }
 }

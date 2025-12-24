@@ -10,7 +10,7 @@ public class Audio {
 
     private final AudioInputStream audioInputStream;
 
-    Audio(File file) {
+    public Audio(File file) {
         try {
             this.audioInputStream = AudioSystem.getAudioInputStream(file.getAbsoluteFile());
         } catch (UnsupportedAudioFileException | IOException e) {
@@ -18,7 +18,7 @@ public class Audio {
         }
     }
 
-    Audio(InputStream stream) {
+    public Audio(InputStream stream) {
         try {
             this.audioInputStream = AudioSystem.getAudioInputStream(stream);
         } catch (UnsupportedAudioFileException | IOException e) {
@@ -26,7 +26,7 @@ public class Audio {
         }
     }
 
-    Audio(URL url) {
+    public Audio(URL url) {
         try {
             this.audioInputStream = AudioSystem.getAudioInputStream(url);
         } catch (UnsupportedAudioFileException | IOException e) {
