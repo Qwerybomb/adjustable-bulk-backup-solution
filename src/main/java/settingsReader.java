@@ -1,5 +1,5 @@
 import utils.Audio;
-import utils.textFile;
+import utils.ExternalTextFile;
 
 import java.io.*;
 import java.net.URLDecoder;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class  settingsReader {
 
     // main class variables
-    private textFile settings = null;
+    private ExternalTextFile settings = null;
     private final ArrayList<String> sourceDirs = new ArrayList<>();
     private String FinalDir = null;
     private int HoursSetting = 24;
@@ -24,6 +24,7 @@ public class  settingsReader {
     final String lineBackupDir = "░▒▓ Backup directory";
     final String lineRecordedHoursTime = "░▒▓ Hours elapsed until update";
     final String lineRecordedDateTime = "░▒▓ Previously recorded Date && time";
+    final String lineDefaultAudioReplacement = "░▒▓ Replace Default error audio with";
 
     public void RefreshSettings() throws IOException {
 
@@ -33,18 +34,20 @@ public class  settingsReader {
 
         // make sure settings is non-null
         if (settings == null) {
-            settings = new textFile(new File(currentDir, "/Settings.txt"));
+            settings = new ExternalTextFile(new File(currentDir, "/Settings.txt"));
         }
 
         // create new settings file if one isn't present
-        if (!settings.getExternalFile().exists()) {
-            settings.createExternalFile();
+        if (!settings.getFile().exists()) {
+            settings.getFile().createNewFile();
             settings.writeFile(lineTargetDir +
                             "\n\n" + lineBackupDir +
                             "\n\n" + lineRecordedHoursTime +
                             "\n" + "0/" + HoursSetting +
                             "\n" + lineRecordedDateTime +
-                            "\n" + decidedDate + " 〗〖 " + decidedTime);
+                            "\n" + decidedDate + " 〗〖 " + decidedTime +
+                            "\n" + lineDefaultAudioReplacement +
+                            "\n");
         }
 
         // prep for file reading
@@ -68,10 +71,19 @@ public class  settingsReader {
             curLine = settings.getLine(settings.findLineOf(lineRecordedDateTime) + 1);
             decidedDate = LocalDate.parse(curLine.substring(0,curLine.lastIndexOf(" 〗")));
             decidedTime = LocalTime.parse(curLine.substring(curLine.lastIndexOf("〖") + 2, curLine.length() - 1));
-    }
 
-    public void setSettingsLocation(String directory) {
-        settings.setFile(new File(directory));
+            // if there is a valid audio defined. set it.
+            curLine = settings.getLine(settings.findLineOf(lineDefaultAudioReplacement) + 1);
+            if (!curLine.isEmpty()) {
+              File audio = new File(curLine);
+              if (audio.exists()) {
+                  audioHandle.setAudio(new Audio(audio), audioHandle.situation.Error);
+              } else {
+                  audioHandle.setAudio(new Audio(Main.class.getResource("Error.wav")), audioHandle.situation.Error);
+              }
+            } else {
+              audioHandle.setAudio(new Audio(Main.class.getResource("Error.wav")), audioHandle.situation.Error);
+            }
     }
 
     public String getFinalDirectory() {
