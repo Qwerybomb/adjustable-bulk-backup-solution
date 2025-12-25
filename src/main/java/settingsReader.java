@@ -79,8 +79,10 @@ public class  settingsReader {
               if (audio.exists()) {
                   audioHandle.setAudio(new Audio(audio), audioHandle.situation.Error);
               } else {
-                  audioHandle.setAudio(new Audio(Main.class.getResourceAsStream("Error.wav")), audioHandle.situation.Error);
+                  audioHandle.setAudio(new Audio(Main.class.getResource("Error.wav")), audioHandle.situation.Error);
               }
+            } else {
+              audioHandle.setAudio(new Audio(Main.class.getResource("Error.wav")), audioHandle.situation.Error);
             }
     }
 
