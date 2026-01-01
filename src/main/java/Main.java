@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
+import java.util.Set;
 
 public class Main {
 
@@ -48,7 +49,7 @@ public class Main {
              throw new RuntimeException(e);
          }
 
-         if (Hour != PreviousHour) {
+         if (Hour != PreviousHour || elapsedHours > SettingsReader.getHoursSetting() - 1) {
 
             Date = LocalDate.now(); // date only updates every hour cause why would it need to update every iteration?
             Time = LocalTime.now();

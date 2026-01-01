@@ -20,11 +20,11 @@ public class  settingsReader {
     private LocalTime decidedTime = LocalTime.now();
 
     // detector strings
-    final String lineTargetDir = "░▒▓ Target Directories:";
-    final String lineBackupDir = "░▒▓ Backup directory";
-    final String lineRecordedHoursTime = "░▒▓ Hours elapsed until update";
-    final String lineRecordedDateTime = "░▒▓ Previously recorded Date && time";
-    final String lineDefaultAudioReplacement = "░▒▓ Replace Default error audio with";
+    private final String lineTargetDir = "░▒▓ Target Directories:";
+    private final String lineBackupDir = "░▒▓ Backup directory";
+    private final String lineRecordedHoursTime = "░▒▓ Hours elapsed until update";
+    private final String lineRecordedDateTime = "░▒▓ Previously recorded Date && time";
+    private final String lineDefaultAudioReplacement = "░▒▓ Replace Default error audio with";
 
     public void RefreshSettings() throws IOException {
 
