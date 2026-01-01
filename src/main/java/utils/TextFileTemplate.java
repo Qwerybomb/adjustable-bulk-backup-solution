@@ -32,4 +32,12 @@ public abstract class TextFileTemplate {
             return "lines is not yet initialized. try calling refreshLines() first";
         }
     }
+
+    public int getLengthIndexForm() {
+        return lines.size() - 1;
+    }
+
+    public int getLengthActualForm() {
+        return lines.size();
+    }
 }

@@ -73,6 +73,9 @@ public class  settingsReader {
             decidedTime = LocalTime.parse(curLine.substring(curLine.lastIndexOf("〖") + 2, curLine.length() - 1));
 
             // if there is a valid audio defined. set it.
+            if (settings.findLineOf(lineDefaultAudioReplacement) == settings.getLengthIndexForm()) {
+                return;
+            }
             curLine = settings.getLine(settings.findLineOf(lineDefaultAudioReplacement) + 1);
             if (!curLine.isEmpty()) {
               File audio = new File(curLine);
