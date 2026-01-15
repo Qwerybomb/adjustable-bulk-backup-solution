@@ -17,10 +17,14 @@ public class Main {
     // class requirements
     static settingsReader SettingsReader = new settingsReader();
 
-    private static int verifyHours(int toElapse) throws IOException {
+    // reads the settings file to determine if the pc has spent time off or ins leep mode and updates accordingly
+    private static int verifyHours() throws IOException {
 
-        // update hours on startup to properly reflect time passed with pc off or in sleep mode.
+        int toElapse;
+
         Date = LocalDate.now();
+        Time = LocalTime.now();
+
         SettingsReader.RefreshSettings();
         toElapse = SettingsReader.getCurrentHours();
         if (!SettingsReader.getPreviousDate().isEqual(Date)) {
@@ -36,7 +40,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-     elapsedHours = verifyHours(elapsedHours);
+     elapsedHours = verifyHours();
 
      // main run loop
      while (true) {
@@ -51,12 +55,9 @@ public class Main {
              throw new RuntimeException(e);
          }
 
-         elapsedHours = verifyHours(elapsedHours);
+         elapsedHours = verifyHours();
 
          if (Hour != PreviousHour || elapsedHours > SettingsReader.getHoursSetting() - 1) {
-
-            Date = LocalDate.now(); // date only updates every hour cause why would it need to update every iteration?
-            Time = LocalTime.now();
 
             System.out.println("HourElapsed");
             elapsedHours++;
