@@ -1,14 +1,9 @@
-
-import utils.Audio;
-import utils.InternalTextFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
-import java.util.Set;
 
 public class Main {
 
@@ -22,19 +17,26 @@ public class Main {
     // class requirements
     static settingsReader SettingsReader = new settingsReader();
 
+    private static int verifyHours(int toElapse) throws IOException {
+
+        // update hours on startup to properly reflect time passed with pc off or in sleep mode.
+        Date = LocalDate.now();
+        SettingsReader.RefreshSettings();
+        toElapse = SettingsReader.getCurrentHours();
+        if (!SettingsReader.getPreviousDate().isEqual(Date)) {
+            toElapse += (int) ((SettingsReader.getPreviousDate().until(Date).get(ChronoUnit.DAYS) * 24) - SettingsReader.getPreviousHour().getHour()) + Time.getHour();
+        } else {
+            toElapse += (int) Math.abs(SettingsReader.getPreviousHour().until(Time, ChronoUnit.HOURS));
+        }
+        SettingsReader.updateCurHours(elapsedHours);
+        SettingsReader.updateCurDateTime(Date, Time);
+
+        return toElapse;
+    }
+
     public static void main(String[] args) throws IOException {
 
-     // update hours on startup to properly reflect time passed with pc off.
-     Date = LocalDate.now();
-     SettingsReader.RefreshSettings();
-     elapsedHours = SettingsReader.getCurrentHours();
-     if (!SettingsReader.getPreviousDate().isEqual(Date)) {
-         elapsedHours += (int) ((SettingsReader.getPreviousDate().until(Date).get(ChronoUnit.DAYS) * 24) - SettingsReader.getPreviousHour().getHour()) + Time.getHour();
-     } else {
-         elapsedHours += (int) Math.abs(SettingsReader.getPreviousHour().until(Time, ChronoUnit.HOURS));
-     }
-     SettingsReader.updateCurHours(elapsedHours);
-     SettingsReader.updateCurDateTime(Date, Time);
+     elapsedHours = verifyHours(elapsedHours);
 
      // main run loop
      while (true) {
@@ -44,10 +46,12 @@ public class Main {
 
         // keep program from using excessive computer resources
          try {
-             Thread.sleep(1500);
+             Thread.sleep(10000);
          } catch (InterruptedException e) {
              throw new RuntimeException(e);
          }
+
+         elapsedHours = verifyHours(elapsedHours);
 
          if (Hour != PreviousHour || elapsedHours > SettingsReader.getHoursSetting() - 1) {
 
@@ -76,9 +80,9 @@ public class Main {
                 for (String s : SettingsReader.getSourceDirectories()) {
 
                     // create directory inside main backup directory for each source
-                    File file = new File(s);
-                    fileHandle.CreateDirectory(dirPath + "/" + file.getName());
-                    fileHandle.copyFiles(s, dirPath + "/" + file.getName());
+                    File SourceDir = new File(s);
+                    fileHandle.CreateDirectory(dirPath + "/" + SourceDir.getName());
+                    fileHandle.copyFiles(s, dirPath + "/" + SourceDir.getName());
 
                 }
                 System.out.println("backupProcess Successful");
