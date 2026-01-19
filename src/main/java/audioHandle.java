@@ -3,6 +3,7 @@ import utils.Audio;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class audioHandle {
@@ -17,7 +18,11 @@ public class audioHandle {
             clip.start();
             Thread.sleep(clip.getMicrosecondLength() / 1000);
         } catch (Exception ex) {
-            System.out.println("Failed to run audio");
+            try {
+                log.appendLog("failed to run audio with exception" + ex.getCause());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             ex.printStackTrace();
         }
     }

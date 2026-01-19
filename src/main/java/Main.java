@@ -17,7 +17,11 @@ public class Main {
     // class requirements
     static settingsReader SettingsReader = new settingsReader();
 
-    // reads the settings file to determine if the pc has spent time off or ins leep mode and updates accordingly
+    /**
+     * Use the settings file and LocalDate/Time to verify what the current hours should be. meant to counteract sleep mode on certain operating systems.
+     * @return the calculated current elapsed hours
+     * @throws IOException
+     */
     private static int verifyHours() throws IOException {
 
         int toElapse;
@@ -42,6 +46,9 @@ public class Main {
 
      elapsedHours = verifyHours();
 
+     log.initLog();
+     log.appendLog("Program began at " + Time.toString() + " " + Date.toString());
+
      // main run loop
      while (true) {
 
@@ -59,7 +66,7 @@ public class Main {
 
          if (Hour != PreviousHour || elapsedHours > SettingsReader.getHoursSetting() - 1) {
 
-            System.out.println("HourElapsed");
+            log.appendLog("hour elapsed at " + Hour);
             elapsedHours++;
             SettingsReader.RefreshSettings();
             SettingsReader.updateCurHours(elapsedHours);
@@ -86,7 +93,7 @@ public class Main {
                     fileHandle.copyFiles(s, dirPath + "/" + SourceDir.getName());
 
                 }
-                System.out.println("backupProcess Successful");
+                log.appendLog("backupProcess Successful");
             }
         }
      }
