@@ -42,6 +42,9 @@ public class log {
         ArrayList<String> fileLines = logFile.getLinesCopy();
         fileLines.add(NewLine);
 
+        System.out.println("log test");
+        System.out.println(fileLines);
+
         StringBuilder fileBuilder = new StringBuilder();
 
         for (String s : fileLines) {
@@ -50,5 +53,6 @@ public class log {
         }
 
         logFile.writeFile(fileBuilder.toString());
+        logFile.refreshLines();
     }
 }
