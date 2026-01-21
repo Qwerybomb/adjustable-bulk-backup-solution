@@ -18,11 +18,7 @@ public class audioHandle {
             clip.start();
             Thread.sleep(clip.getMicrosecondLength() / 1000);
         } catch (Exception ex) {
-            try {
-                log.appendLog("failed to run audio with exception" + ex.getCause());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            log.appendLog("failed to run audio with exception" + ex.getCause());
             ex.printStackTrace();
         }
     }

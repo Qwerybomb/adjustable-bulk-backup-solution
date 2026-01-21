@@ -38,12 +38,9 @@ public class log {
      * adds a new line to the log file.
      * @param NewLine the new line to add
      */
-    public static void appendLog(String NewLine) throws IOException {
+    public static void appendLog(String NewLine) {
         ArrayList<String> fileLines = logFile.getLinesCopy();
         fileLines.add(NewLine);
-
-        System.out.println("log test");
-        System.out.println(fileLines);
 
         StringBuilder fileBuilder = new StringBuilder();
 
@@ -52,7 +49,11 @@ public class log {
             fileBuilder.append("\n");
         }
 
-        logFile.writeFile(fileBuilder.toString());
+        try {
+            logFile.writeFile(fileBuilder.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         logFile.refreshLines();
     }
 }

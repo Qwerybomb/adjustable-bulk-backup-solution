@@ -26,6 +26,7 @@ public class fileHandle {
                 System.out.println("copied Files from" + sourceDirectoryLocation);
             } catch (IOException e) {
                 audioHandle.playSound(audioHandle.situation.Error);
+                log.appendLog(e.getMessage());
                 e.printStackTrace();
             }
         });
