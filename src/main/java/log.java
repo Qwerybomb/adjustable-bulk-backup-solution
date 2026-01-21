@@ -21,7 +21,7 @@ public class log {
            String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
            String decodedPath = URLDecoder.decode(path, "UTF-8");
            String currentDir = decodedPath.substring(0, decodedPath.lastIndexOf("/"));
-           logFile = new ExternalTextFile(new File(currentDir + "/BackupActionLog"));
+           logFile = new ExternalTextFile(new File(currentDir + "/BackupActionLog.txt"));
         }
 
         if (!logFile.getFile().exists()) {
