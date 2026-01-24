@@ -37,10 +37,11 @@ public class log {
     /**
      * adds a new line to the log file.
      * @param NewLine the new line to add
+     * @param IncludeDate weather to include the current date or not
      */
-    public static void appendLog(String NewLine) {
+    public static void appendLog(String NewLine, boolean IncludeDate) {
         ArrayList<String> fileLines = logFile.getLinesCopy();
-        fileLines.add(NewLine);
+        fileLines.add((IncludeDate ? LocalTime.now() + " " + LocalDate.now() + " : " : "") + NewLine );
 
         StringBuilder fileBuilder = new StringBuilder();
 

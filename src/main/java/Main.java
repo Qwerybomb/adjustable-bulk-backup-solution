@@ -47,7 +47,7 @@ public class Main {
      elapsedHours = verifyHours();
 
      log.initLog();
-     log.appendLog("Program began at " + Time.toString() + " " + Date.toString());
+     log.appendLog("Program began", true);
 
      // main run loop
      while (true) {
@@ -66,7 +66,7 @@ public class Main {
 
          if (Hour != PreviousHour || elapsedHours > SettingsReader.getHoursSetting() - 1) {
 
-            log.appendLog("hour elapsed at " + Hour);
+            log.appendLog("hour elapsed at " + Hour, true);
             elapsedHours++;
             SettingsReader.RefreshSettings();
             SettingsReader.updateCurHours(elapsedHours);
@@ -75,6 +75,8 @@ public class Main {
 
             // check if current passed hours = or is > than the setting for the backup timer
             if (elapsedHours > SettingsReader.getHoursSetting() - 1) {
+
+                log.appendLog("beginning backup process", true);
 
                 // reset timer
                 elapsedHours = 0;
@@ -93,7 +95,7 @@ public class Main {
                     fileHandle.copyFiles(s, dirPath + "/" + SourceDir.getName());
 
                 }
-                log.appendLog("backupProcess Successful");
+                log.appendLog("backupProcess Successful", true);
             }
         }
      }
